@@ -1,0 +1,27 @@
+[project]
+name = "voice-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Nick Ormrod", email = "77686614+enceeoh@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.117.0",
+    "httpx>=0.28.1",
+    "pydantic-settings>=2.14.2",
+]
+
+[project.scripts]
+voice-agent = "voice_agent:main"
+
+[build-system]
+requires = ["uv_build>=0.11.15,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.15.22",
+]
