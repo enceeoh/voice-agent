@@ -45,15 +45,38 @@ class QuoteItem(BaseModel):
 
 
 class Quote(BaseModel):
+    # Deliberately NO totals and NO sign-off flag: those are pure
+    # computation over the line items, owned by code (compute_totals /
+    # needs_director_signoff below). Three eval runs produced three
+    # different model-computed totals semantics; judgment belongs to the
+    # model, arithmetic does not.
     items: list[QuoteItem]
-    total_low_gbp: float
-    total_high_gbp: float
     lead_time_notes: list[str]
     deposit_terms: str | None
-    needs_director_signoff: bool  # jobs over £10,000
     to_confirm_with_customer: list[str]
     out_of_scope_notes: list[str]
     disclaimers: list[str]
+
+
+DIRECTOR_SIGNOFF_THRESHOLD_GBP = 10_000
+
+
+def compute_totals(quote: Quote) -> tuple[float, float]:
+    """Deterministic totals. Low bound: best case — conditional items may
+    not be needed, so they're excluded. High bound: everything, at the
+    top of each range. Negative-priced discounts fold in naturally."""
+    low = sum(
+        i.price_low_gbp
+        for i in quote.items
+        if i.price_low_gbp is not None and not i.conditional
+    )
+    high = sum(i.price_high_gbp for i in quote.items if i.price_high_gbp is not None)
+    return low, high
+
+
+def needs_director_signoff(quote: Quote) -> bool:
+    _, high = compute_totals(quote)
+    return high > DIRECTOR_SIGNOFF_THRESHOLD_GBP
 
 
 QUOTING_INSTRUCTIONS = """\
@@ -65,7 +88,11 @@ job requests. Follow the price book and quoting rules exactly:
   given, set prices to null and add what's needed to to_confirm_with_customer.
 - Apply every quoting rule that the job request triggers: older-property
   consumer unit rule, access/location surcharges, bundle discounts, lead
-  times, deposits, director sign-off threshold.
+  times, deposits.
+- Where a discount is computable, express it as a line item with NEGATIVE
+  prices (e.g. -259.0). Where it cannot be computed yet, use null prices
+  and explain in the description.
+- Do not compute totals — they are derived from your line items in code.
 - Mark items contingent on survey or inspection findings as conditional.
 - Never price out-of-scope work; note it in out_of_scope_notes instead.
 - Estimates from voicemails are always estimates pending survey — include

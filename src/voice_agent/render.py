@@ -1,9 +1,9 @@
 """Render a Quote into human-facing text: customer SMS + office email.
 
 Deliberately model-free: the data is already structured and grounded;
-rendering is deterministic. This module is also the runtime home of the
-arithmetic guard — totals are recomputed from line items and a mismatch
-refuses to render rather than sending a wrong number to a human.
+rendering is deterministic. Totals and the sign-off flag are computed in
+code (quote.compute_totals) — the model never does arithmetic; the only
+runtime guard left is item-level sanity (verify_items).
 
 Usage:
     uv run python -m voice_agent.render data/samples/job1.m4a
@@ -13,27 +13,21 @@ import sys
 from pathlib import Path
 
 from .extract import JobExtraction, extract_job
-from .quote import Quote, build_quote
+from .quote import Quote, build_quote, compute_totals, needs_director_signoff
 from .transcribe import transcribe_file
 
 
-class TotalsMismatch(Exception):
-    """Model-stated totals disagree with recomputed line items."""
+class InvalidDiscount(Exception):
+    """A discount line item carries a positive price."""
 
 
-def verify_totals(quote: Quote) -> None:
-    """Recompute totals from line items; raise on disagreement.
-
-    Discounts with null prices are unpriced notes, not arithmetic inputs.
-    Tolerance of £1 absorbs float noise, nothing more.
-    """
-    low = sum(i.price_low_gbp for i in quote.items if i.price_low_gbp is not None)
-    high = sum(i.price_high_gbp for i in quote.items if i.price_high_gbp is not None)
-    if abs(low - quote.total_low_gbp) > 1 or abs(high - quote.total_high_gbp) > 1:
-        raise TotalsMismatch(
-            f"quote totals £{quote.total_low_gbp:,.0f}–£{quote.total_high_gbp:,.0f} "
-            f"!= recomputed £{low:,.0f}–£{high:,.0f}"
-        )
+def verify_items(quote: Quote) -> None:
+    """Item-level sanity: discounts must be negative-or-null priced.
+    (Totals need no verification — code computes them; see quote.py.)"""
+    for item in quote.items:
+        if item.item_type == "discount" and item.price_low_gbp is not None:
+            if item.price_low_gbp > 0 or (item.price_high_gbp or 0) > 0:
+                raise InvalidDiscount(f"positive-priced discount: {item.description[:60]}")
 
 
 def _money(low: float | None, high: float | None) -> str:
@@ -46,7 +40,8 @@ def _money(low: float | None, high: float | None) -> str:
 
 def customer_sms(quote: Quote, extraction: JobExtraction) -> str:
     """<=2 SMS segments, friendly-tradesperson voice, GSM-7-safe chars."""
-    verify_totals(quote)
+    verify_items(quote)
+    low, high = compute_totals(quote)
     services = " + ".join(
         j.service.replace("_", " ") for j in extraction.jobs
     ) or "your job"
@@ -57,7 +52,7 @@ def customer_sms(quote: Quote, extraction: JobExtraction) -> str:
     )
     return (
         f"Hi, Fuseworks Electrical here - thanks for your message about the "
-        f"{services}. Rough estimate: {_money(quote.total_low_gbp, quote.total_high_gbp)} "
+        f"{services}. Rough estimate: {_money(low, high)} "
         f"depending on options, {biggest_caveat}. "
         f"Can we call you to book a free survey? Reply or ring us back. Cheers!"
     )
@@ -67,7 +62,8 @@ def office_email(
     quote: Quote, extraction: JobExtraction, transcript: str
 ) -> tuple[str, str]:
     """Returns (subject, plain-text body)."""
-    verify_totals(quote)
+    verify_items(quote)
+    low, high = compute_totals(quote)
 
     lines: list[str] = []
     lines.append(f"NEW VOICEMAIL JOB — {extraction.summary}")
@@ -82,8 +78,8 @@ def office_email(
                      f"{item.description}{flag}")
         lines.append(f"                  basis: {item.basis}")
     lines.append(f"  {'-' * 14}")
-    lines.append(f"  {_money(quote.total_low_gbp, quote.total_high_gbp):>14}  TOTAL RANGE")
-    if quote.needs_director_signoff:
+    lines.append(f"  {_money(low, high):>14}  TOTAL RANGE")
+    if needs_director_signoff(quote):
         lines.append("")
         lines.append("  *** REQUIRES DIRECTOR SIGN-OFF before sending (may exceed £10,000) ***")
     lines.append("")

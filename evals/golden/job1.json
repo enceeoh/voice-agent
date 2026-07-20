@@ -1,0 +1,20 @@
+{
+  "audio": "job1.m4a",
+  "name": "multi-job, pre-2000 fuse box, no callback number",
+  "extraction": [
+    {"path": "property.property_type", "op": "eq", "value": "terraced"},
+    {"path": "property.consumer_unit_age", "op": "eq", "value": "pre_2000"},
+    {"path": "callback_number", "op": "is_null"},
+    {"path": "jobs[*].service", "op": "set_eq", "value": ["ev_charger", "solar_pv"]},
+    {"path": "missing_info", "op": "any_contains", "value": "number"},
+    {"path": "out_of_scope_requests", "op": "len_eq", "value": 0}
+  ],
+  "quote": [
+    {"path": "items[*].item_type", "op": "contains", "value": "inspection"},
+    {"path": "needs_director_signoff", "op": "eq", "value": true},
+    {"path": "total_high_gbp", "op": "gte", "value": 10000},
+    {"path": "disclaimers", "op": "any_contains", "value": "survey"},
+    {"path": "disclaimers", "op": "any_contains", "value": "30 days"},
+    {"path": "to_confirm_with_customer", "op": "any_contains", "value": "panel"}
+  ]
+}
