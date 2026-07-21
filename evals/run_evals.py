@@ -48,6 +48,8 @@ def check(assertion: dict, data: object) -> tuple[bool, str]:
         ok = value is None
     elif op == "gte":
         ok = value >= expected
+    elif op == "lte":
+        ok = value <= expected
     elif op == "len_eq":
         ok = len(value) == expected
     elif op == "set_eq":
@@ -55,7 +57,8 @@ def check(assertion: dict, data: object) -> tuple[bool, str]:
     elif op == "contains":
         ok = expected in value
     elif op == "any_contains":
-        ok = any(expected.lower() in str(item).lower() for item in value)
+        items = [value] if isinstance(value, str) else (value or [])
+        ok = any(expected.lower() in str(item).lower() for item in items)
     else:
         return False, f"unknown op {op!r}"
     return ok, f"{assertion['path']} {op} {expected!r} (got {_brief(value)})"

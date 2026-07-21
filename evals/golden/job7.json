@@ -1,0 +1,15 @@
+{
+  "audio": "job7.m4a",
+  "name": "ambiguity trap: 'the fast charger' -> spanning range, ask don't assume",
+  "extraction": [
+    {"path": "jobs[*].service", "op": "set_eq", "value": ["ev_charger"]},
+    {"path": "callback_number", "op": "is_null"},
+    {"path": "missing_info", "op": "any_contains", "value": "number"}
+  ],
+  "quote": [
+    {"path": "total_high_gbp", "op": "gte", "value": 1850},
+    {"path": "total_high_gbp", "op": "lte", "value": 3500},
+    {"path": "items[*].item_type", "op": "contains", "value": "inspection"},
+    {"path": "to_confirm_with_customer", "op": "any_contains", "value": "charger"}
+  ]
+}

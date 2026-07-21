@@ -1,0 +1,16 @@
+{
+  "audio": "job2.m4a",
+  "name": "clean baseline: two kitchen sockets, full contact details",
+  "extraction": [
+    {"path": "caller_name", "op": "eq", "value": "John Ham"},
+    {"path": "callback_number", "op": "eq", "value": "0213254962"},
+    {"path": "jobs[*].service", "op": "set_eq", "value": ["sockets_or_lighting"]},
+    {"path": "out_of_scope_requests", "op": "len_eq", "value": 0}
+  ],
+  "quote": [
+    {"path": "total_low_gbp", "op": "gte", "value": 150},
+    {"path": "total_low_gbp", "op": "lte", "value": 250},
+    {"path": "needs_director_signoff", "op": "eq", "value": false},
+    {"path": "disclaimers", "op": "any_contains", "value": "survey"}
+  ]
+}

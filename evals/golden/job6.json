@@ -1,0 +1,16 @@
+{
+  "audio": "job6.m4a",
+  "name": "threshold straddler: 8 panels + battery, signoff from high bound",
+  "extraction": [
+    {"path": "caller_name", "op": "eq", "value": "John Matthews"},
+    {"path": "property.property_type", "op": "eq", "value": "detached"},
+    {"path": "property.consumer_unit_age", "op": "eq", "value": "post_2000"},
+    {"path": "jobs[*].service", "op": "set_eq", "value": ["solar_pv", "battery_storage"]}
+  ],
+  "quote": [
+    {"path": "total_low_gbp", "op": "gte", "value": 9500},
+    {"path": "total_low_gbp", "op": "lte", "value": 9999},
+    {"path": "total_high_gbp", "op": "gte", "value": 10000},
+    {"path": "needs_director_signoff", "op": "eq", "value": true}
+  ]
+}

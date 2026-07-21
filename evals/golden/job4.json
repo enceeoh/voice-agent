@@ -1,0 +1,13 @@
+{
+  "audio": "job4.m4a",
+  "name": "clear decline: gas boiler service, price nothing",
+  "extraction": [
+    {"path": "jobs", "op": "len_eq", "value": 0},
+    {"path": "out_of_scope_requests", "op": "len_eq", "value": 1},
+    {"path": "callback_number", "op": "eq", "value": "1237894524"}
+  ],
+  "quote": [
+    {"path": "items", "op": "len_eq", "value": 0},
+    {"path": "out_of_scope_notes", "op": "any_contains", "value": "gas"}
+  ]
+}

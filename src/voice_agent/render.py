@@ -70,6 +70,10 @@ def office_email(
     lines.append("")
     lines.append(f"Caller: {extraction.caller_name or 'not given'}")
     lines.append(f"Callback: {extraction.callback_number or 'NOT GIVEN — check caller ID'}")
+    if extraction.contact_notes:
+        lines.append(f"Contact notes: {extraction.contact_notes}")
+    if extraction.budget_gbp is not None:
+        lines.append(f"Stated budget: £{extraction.budget_gbp:,.0f}")
     lines.append("")
     lines.append("ESTIMATE (pending survey)")
     for item in quote.items:

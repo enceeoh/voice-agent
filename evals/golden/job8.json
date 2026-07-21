@@ -1,0 +1,15 @@
+{
+  "audio": "job8.m4a",
+  "name": "numbers gauntlet: address, budget, two phones with constraint",
+  "extraction": [
+    {"path": "callback_number", "op": "eq", "value": "07477371297"},
+    {"path": "contact_notes", "op": "any_contains", "value": "02010479425"},
+    {"path": "budget_gbp", "op": "eq", "value": 3000},
+    {"path": "property.location", "op": "any_contains", "value": "Woodstock"},
+    {"path": "jobs[*].service", "op": "set_eq", "value": ["sockets_or_lighting"]}
+  ],
+  "quote": [
+    {"path": "total_low_gbp", "op": "gte", "value": 420},
+    {"path": "total_low_gbp", "op": "lte", "value": 500}
+  ]
+}

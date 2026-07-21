@@ -44,6 +44,9 @@ class JobExtraction(BaseModel):
     caller_name: str | None
     callback_number: str | None  # from the audio only; telephony caller-ID
     #                              is merged in later, at the webhook layer
+    contact_notes: str | None  # second numbers, call-time constraints,
+    #                            contact preferences ("after 5pm on the landline")
+    budget_gbp: float | None  # only if the caller states a budget
     property: PropertyDetails
     jobs: list[RequestedJob]
     out_of_scope_requests: list[str]  # things we clearly don't do (plumbing etc.)
@@ -63,6 +66,9 @@ Rules:
 - "Late nineties" or similar dates before 2000 -> consumer_unit_age pre_2000.
 - missing_info: list the specific facts a quoting electrician would still
   need (e.g. callback number, roof size or panel count, parking situation).
+- Alternative numbers and when-to-call constraints go in contact_notes;
+  a stated budget goes in budget_gbp. Keep property.notes for property
+  facts only.
 - out_of_scope_requests: anything requested that an electrician clearly
   does not do (gas, plumbing, roofing repair, appliances).
 """

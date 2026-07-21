@@ -1,0 +1,13 @@
+{
+  "audio": "job5.m4a",
+  "name": "grey area: hot tub hum -> offer supply fault-finding, disclaim appliance",
+  "extraction": [
+    {"path": "callback_number", "op": "eq", "value": "78245673"}
+  ],
+  "quote": [
+    {"path": "items[*].description", "op": "any_contains", "value": "fault"},
+    {"path": "total_low_gbp", "op": "gte", "value": 68},
+    {"path": "total_low_gbp", "op": "lte", "value": 150},
+    {"path": "out_of_scope_notes", "op": "any_contains", "value": "appliance"}
+  ]
+}

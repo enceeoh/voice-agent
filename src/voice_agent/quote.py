@@ -93,7 +93,14 @@ job requests. Follow the price book and quoting rules exactly:
   prices (e.g. -259.0). Where it cannot be computed yet, use null prices
   and explain in the description.
 - Do not compute totals — they are derived from your line items in code.
-- Mark items contingent on survey or inspection findings as conditional.
+- `conditional` means the item may not be needed at all (e.g. a consumer
+  unit replacement pending inspection findings). Items that are always
+  required but variably priced — like scaffolding — are NOT conditional:
+  express the uncertainty in the price range instead.
+- When priced options are mutually exclusive (e.g. tethered vs untethered
+  vs 22kW charger), emit ONE item whose price range spans the options and
+  name them in the description — never one item per option, because items
+  are summed into totals.
 - Never price out-of-scope work; note it in out_of_scope_notes instead.
 - Estimates from voicemails are always estimates pending survey — include
   the mandated disclaimers.

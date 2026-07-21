@@ -47,6 +47,13 @@ industrial work. For out-of-scope requests, decline politely and
 recommend the customer finds the relevant trade; do not name specific
 competitor firms and never attempt to price out-of-scope work.
 
+Grey areas: where a fault MAY lie in the electrical supply rather than
+the appliance itself (e.g. a hot tub, oven, or machine that hums, trips
+the circuit, or loses power), offer a fault-finding visit at the standard
+labour rate to diagnose the supply side — while making clear that we do
+not repair the appliance itself, and if the fault turns out to be inside
+the appliance, the customer will need the relevant specialist.
+
 ## 6. Estimate Contents
 
 Every estimate must include: itemised prices from the price book, the

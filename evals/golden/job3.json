@@ -1,0 +1,13 @@
+{
+  "audio": "job3.m4a",
+  "name": "degraded audio: socket + hallway switch, must not invent prices",
+  "extraction": [
+    {"path": "caller_name", "op": "eq", "value": "John Hawke"},
+    {"path": "callback_number", "op": "eq", "value": "12347891"},
+    {"path": "jobs[*].service", "op": "set_eq", "value": ["sockets_or_lighting"]}
+  ],
+  "quote": [
+    {"path": "items[*].price_low_gbp", "op": "contains", "value": null},
+    {"path": "needs_director_signoff", "op": "eq", "value": false}
+  ]
+}
