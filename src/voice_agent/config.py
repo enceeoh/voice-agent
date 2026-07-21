@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     anthropic_api_key: str
     deepgram_api_key: str
+    database_url: str = "postgresql://voice:voice@localhost:5433/voice"
 
     anthropic_model: str = "claude-opus-4-8"
 
