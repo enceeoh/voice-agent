@@ -1,0 +1,13 @@
+{
+  "audio": "job9.mp3",
+  "name": "enquiry-only (live call harvest): facts stated, nothing requested",
+  "extraction": [
+    {"path": "jobs", "op": "len_eq", "value": 0},
+    {"path": "property.consumer_unit_age", "op": "eq", "value": "post_2000"},
+    {"path": "out_of_scope_requests", "op": "len_eq", "value": 0}
+  ],
+  "quote": [
+    {"path": "total_high_gbp", "op": "lte", "value": 0},
+    {"path": "needs_director_signoff", "op": "eq", "value": false}
+  ]
+}

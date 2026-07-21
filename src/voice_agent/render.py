@@ -42,9 +42,18 @@ def customer_sms(quote: Quote, extraction: JobExtraction) -> str:
     """<=2 SMS segments, friendly-tradesperson voice, GSM-7-safe chars."""
     verify_items(quote)
     low, high = compute_totals(quote)
-    services = " + ".join(
-        j.service.replace("_", " ") for j in extraction.jobs
-    ) or "your job"
+
+    # Enquiry-only voicemail (no priceable job stated): never send a
+    # "£0 estimate" — that reads as broken. Acknowledge and promise the
+    # callback instead.
+    if not extraction.jobs or high == 0:
+        return (
+            "Hi, Fuseworks Electrical here - thanks for your message. "
+            "We'd like to find out a bit more about what you need, so "
+            "we'll give you a call back shortly. Cheers!"
+        )
+
+    services = " + ".join(j.service.replace("_", " ") for j in extraction.jobs)
     biggest_caveat = (
         "we'd need an inspection first as your fuse box may need updating"
         if any(i.item_type == "inspection" for i in quote.items)

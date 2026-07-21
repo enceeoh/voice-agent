@@ -10,7 +10,12 @@ class Settings(BaseSettings):
 
     anthropic_api_key: str
     deepgram_api_key: str
+    twilio_account_sid: str
+    twilio_auth_token: str
     database_url: str = "postgresql://voice:voice@localhost:5433/voice"
+    # The base URL Twilio reaches us on (ngrok locally, Railway in prod).
+    # Used to reconstruct the exact URL for webhook signature validation.
+    public_base_url: str = "http://localhost:8000"
 
     anthropic_model: str = "claude-opus-4-8"
 
